@@ -17,7 +17,7 @@ This exercise contains a number of questions. Answers to those describe the requ
 
 * What are the security requirements of your application?
   
-  Any network communications which is not used by deployed services must be blocked.
+  Any network communications which is not used by deployed services must be blocked. All VMs must have direct Internet access for update purposes.
 
 * What are the high availability requirements?
   * There are no any high availability requirements for AWX service;
