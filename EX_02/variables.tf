@@ -14,3 +14,11 @@ variable "sg_name" {
   type    = string
   default = "Public_SG"
 }
+
+variable "vms" {
+  type = map(any)
+  default = {
+    netbox = "Standard_B1s"
+    awx    = "Standard_B1s"
+  }
+}

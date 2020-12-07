@@ -36,7 +36,9 @@ resource "azurerm_subnet" "tf_public_subnet" {
 #################
 
 resource "azurerm_public_ip" "tf_public_ip" {
-  name                = var.pub_ip_name
+  for_each = var.vms
+
+  name                = "${each.key}-Public_IP"
   location            = var.location
   resource_group_name = azurerm_resource_group.tf_rg.name
   allocation_method   = var.pub_ip_method
@@ -47,14 +49,16 @@ resource "azurerm_public_ip" "tf_public_ip" {
 ##############################
 
 resource "azurerm_network_interface" "tf_nic" {
-  name                = var.nic_name
+  for_each = var.vms
+
+  name                = "${each.key}-nic"
   location            = var.location
   resource_group_name = azurerm_resource_group.tf_rg.name
 
   ip_configuration {
     name                          = var.nic_ip_conf_name
     subnet_id                     = azurerm_subnet.tf_public_subnet.id
-    public_ip_address_id          = azurerm_public_ip.tf_public_ip.id
+    public_ip_address_id          = azurerm_public_ip.tf_public_ip[each.key].id
     private_ip_address_allocation = "Dynamic"
   }
 }

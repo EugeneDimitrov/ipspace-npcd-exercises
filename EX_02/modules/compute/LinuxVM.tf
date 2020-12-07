@@ -5,19 +5,21 @@
 ######################
 
 resource "azurerm_virtual_machine" "tf_vm" {
-  name                  = var.vm_name
+  for_each = var.vms
+
+  name                  = each.key
   location              = var.location
   resource_group_name   = var.rg_name
-  network_interface_ids = var.nic_id
-  vm_size               = var.vm_size
+  network_interface_ids = [var.tf_nic[each.key].id]
+  vm_size               = each.value
 
   os_profile {
-    computer_name  = var.vm_name
+    computer_name  = each.key
     admin_username = var.admin_user
   }
 
   storage_os_disk {
-    name          = "${var.vm_name}_disk"
+    name          = "${each.key}_disk"
     create_option = "FromImage"
   }
 

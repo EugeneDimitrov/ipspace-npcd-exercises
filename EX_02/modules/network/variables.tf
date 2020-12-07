@@ -31,22 +31,17 @@ variable "public_sub_address" {
   default = ["172.17.1.0/24"]
 }
 
-variable "pub_ip_name" {
-  type    = string
-  default = "VM_Public_IP"
-}
-
 variable "pub_ip_method" {
   type    = string
   default = "Static"
 }
 
-variable "nic_name" {
-  type    = string
-  default = "VM_NIC"
-}
-
 variable "nic_ip_conf_name" {
   type    = string
   default = "VM_NIC_Config"
+}
+
+variable "vms" {
+  type    = map(any)
+  default = null
 }

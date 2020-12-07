@@ -61,6 +61,8 @@ resource "azurerm_network_security_rule" "tf_sr_https" {
 ##############################
 
 resource "azurerm_network_interface_security_group_association" "tf_sg_nic" {
-  network_interface_id      = var.tf_nic_id
+  for_each = var.vms
+
+  network_interface_id      = var.tf_nic[each.key].id
   network_security_group_id = azurerm_network_security_group.tf_sg.id
 }

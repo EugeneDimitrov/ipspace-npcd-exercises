@@ -1,18 +1,13 @@
 # variables for LinuxVM.tf
 
-variable "vm_name" {
-  type    = string
-  default = "LinuxVM"
+variable "vms" {
+  type    = map(any)
+  default = null
 }
 
 variable "admin_user" {
   type    = string
   default = "azure"
-}
-
-variable "vm_size" {
-  type    = string
-  default = "Standard_B1s"
 }
 
 variable "image_publisher" {
@@ -47,8 +42,8 @@ variable "rg_name" {
   default     = ""
 }
 
-variable "nic_id" {
+variable "tf_nic" {
   description = "ID network interface card to be connected to VM"
-  type        = list(string)
+  type        = map(any)
   default     = null
 }

@@ -16,7 +16,12 @@ variable "sg_name" {
   default = null
 }
 
-variable "tf_nic_id" {
-  type    = string
+variable "tf_nic" {
+  type    = map(any)
+  default = null
+}
+
+variable "vms" {
+  type    = map(any)
   default = null
 }
