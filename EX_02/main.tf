@@ -25,7 +25,6 @@ module "compute" {
   rg_name  = var.rg_name
   location = var.location
   tf_nic   = module.network.tf_nic
-
 }
 
 module "security" {
