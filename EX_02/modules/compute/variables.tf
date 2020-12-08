@@ -43,7 +43,11 @@ variable "rg_name" {
 }
 
 variable "tf_nic" {
-  description = "ID network interface card to be connected to VM"
-  type        = map(any)
-  default     = null
+  type    = map(any)
+  default = null
+}
+
+variable "public_ip" {
+  type    = map(any)
+  default = null
 }

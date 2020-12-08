@@ -1,3 +1,5 @@
+# This was created using Terraform v0.14.0
+
 terraform {
   required_providers {
     azurerm = {
@@ -21,10 +23,11 @@ module "network" {
 module "compute" {
   source = "./modules/compute"
 
-  vms      = var.vms
-  rg_name  = var.rg_name
-  location = var.location
-  tf_nic   = module.network.tf_nic
+  vms       = var.vms
+  rg_name   = var.rg_name
+  location  = var.location
+  tf_nic    = module.network.tf_nic
+  public_ip = module.network.public_ip
 }
 
 module "security" {

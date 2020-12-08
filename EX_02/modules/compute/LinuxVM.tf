@@ -38,6 +38,21 @@ resource "azurerm_virtual_machine" "tf_vm" {
     }
   }
 
+  provisioner "remote-exec" {
+    inline = ["sudo apt install -y python3"]
+
+    connection {
+      host        = var.public_ip[each.key].ip_address
+      type        = "ssh"
+      user        = var.admin_user
+      private_key = file("~/.ssh/id_rsa")
+    }
+  }
+
+  provisioner "local-exec" {
+    command = "ansible-playbook -u '${var.admin_user}' -i '${var.public_ip[each.key].ip_address},' --private-key '~/.ssh/id_rsa' provision.yml"
+  }
+
   delete_os_disk_on_termination    = true
   delete_data_disks_on_termination = true
 }

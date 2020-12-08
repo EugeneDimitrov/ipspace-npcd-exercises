@@ -1,0 +1,10 @@
+#This playbook was created using Ansible 2.10.3
+
+- hosts: all
+
+  tasks:
+  - name: Update and upgrade apt packages
+    become: true
+    apt:
+      upgrade: yes
+      update_cache: yes
