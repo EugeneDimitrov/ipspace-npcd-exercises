@@ -1,0 +1,9 @@
+[web]
+web-srv-1     ansible_host=172.17.1.4
+[db]
+db-srv-1      ansible_host=172.17.2.4
+[jh]
+jumphost      ansible_host=20.52.130.121
+
+[all:vars]
+ansible_user=azure
