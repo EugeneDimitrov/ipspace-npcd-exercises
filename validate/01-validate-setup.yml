@@ -1,7 +1,0 @@
-# This playbook was created using Ansible 2.9.6
----
-- hosts: all
-
-  tasks:
-    - debug: var=ansible_hostname
-      delegate_to: oldserver
