@@ -25,19 +25,9 @@ variable "web_sub_name" {
   default = "Web"
 }
 
-variable "web_ipv6_sub_name" {
-  type    = string
-  default = "Web_ipv6"
-}
-
 variable "web_sub_address" {
   type    = list(string)
-  default = ["172.17.1.0/24"]
-}
-
-variable "web_ipv6_sub_address" {
-  type    = list(string)
-  default = ["fd00:db8:deca:deed::/64"]
+  default = ["172.17.1.0/24","fd00:db8:deca:deed::/64"]
 }
 
 variable "pub_ip_name_1" {

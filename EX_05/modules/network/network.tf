@@ -22,13 +22,6 @@ resource "azurerm_subnet" "tf_web_subnet" {
   address_prefixes     = var.web_sub_address
 }
 
-resource "azurerm_subnet" "tf_web_ipv6_subnet" {
-  name                 = var.web_ipv6_sub_name
-  resource_group_name  = var.rg_name
-  virtual_network_name = azurerm_virtual_network.tf_vnet.name
-  address_prefixes     = var.web_ipv6_sub_address
-}
-
 #################
 #create public ip
 #################
@@ -73,7 +66,7 @@ resource "azurerm_network_interface" "tf_web_nic_1" {
 
   ip_configuration {
     name                          = var.web_nic_ipv6_conf_name
-    subnet_id                     = azurerm_subnet.tf_web_ipv6_subnet.id
+    subnet_id                     = azurerm_subnet.tf_web_subnet.id
     private_ip_address_version    = "IPv6"
     public_ip_address_id          = azurerm_public_ip.tf_pub_ipv6_1.id
     private_ip_address_allocation = "Dynamic"
