@@ -17,7 +17,7 @@ Use this URL http://appgw.germanywestcentral.cloudapp.azure.com to check how it 
 
 In this solution I'm using "Log Analytics Workspace" (LAW) which is tracking auth logs from jumphost VM.
 
-* Every 5 min LAW checking jumphost VM auth syslog messages using this query:
+Every 5 min LAW checking jumphost VM auth syslog messages using this query:
 ```
 Syslog
 | where SyslogMessage startswith "Accepted publickey for azure from"
