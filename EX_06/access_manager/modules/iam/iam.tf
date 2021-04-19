@@ -14,11 +14,11 @@ data "azuread_user" "tf_user_mclimp" {
 
 #assign RO role to RG for user mclimp
 
-#resource "azurerm_role_assignment" "tf_role_assignment_reader" {
-#  scope                = var.rg_id
-#  role_definition_name = "Reader"
-#  principal_id         = data.azuread_user.tf_user_mclimp.object_id
-#}
+resource "azurerm_role_assignment" "tf_role_assignment_reader" {
+  scope                = var.rg_id
+  role_definition_name = "Reader"
+  principal_id         = data.azuread_user.tf_user_mclimp.object_id
+}
 
 #assign Network Contributor role to RG for user mclimp
 

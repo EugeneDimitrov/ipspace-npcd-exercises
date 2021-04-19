@@ -27,7 +27,9 @@ variable "jh_nic_name" {
   default = "VM_NIC_JH"
 }
 
-variable "log_analytic_name" {
+# variables for loganalytic module
+
+variable "jh_vm_name" {
   type    = string
-  default = "LogAnalyticWorkspace"
+  default = "jumphost"
 }

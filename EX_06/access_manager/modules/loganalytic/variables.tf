@@ -14,3 +14,8 @@ variable "log_analytic_name" {
   type    = string
   default = "LogAnalyticWorkspace"
 }
+
+variable "jh_vm_name" {
+  type    = string
+  default = ""
+}

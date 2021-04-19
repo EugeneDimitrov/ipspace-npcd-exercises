@@ -103,45 +103,6 @@ resource "azurerm_linux_virtual_machine" "tf_jh_vm" {
   }
 }
 
-# add vm extension for log analytic
-
-resource "azurerm_virtual_machine_extension" "tf_jh_vm_oms" {
-  virtual_machine_id         = azurerm_linux_virtual_machine.tf_jh_vm.id
-  name                       = "OmsAgentForLinux"
-  publisher                  = "Microsoft.EnterpriseCloud.Monitoring"
-  type                       = "OmsAgentForLinux"
-  type_handler_version       = "1.13"
-  auto_upgrade_minor_version = true
-
-  settings = <<SETTINGS
-    {
-        "workspaceId": "${var.log_analytic_id}"
-    }
-  SETTINGS
-
-  protected_settings = <<PROTECTED_SETTINGS
-    {
-        "workspaceKey": "${var.log_analytic_key}"
-    }
-  PROTECTED_SETTINGS
-
-}
-
-resource "azurerm_virtual_machine_extension" "tf_jh_vm_cust_script" {
-    name = "CustomScript"
-    virtual_machine_id         = azurerm_linux_virtual_machine.tf_jh_vm.id
-    publisher = "Microsoft.Azure.Extensions"
-    type = "CustomScript"
-    type_handler_version = "2.1"
-
-    settings = <<SETTINGS
-    {
-        "fileUris": ["https://raw.githubusercontent.com/EugeneDimitrov/ipspace-npcd-scripts/main/oms-cfg.sh"],
-        "commandToExecute": "sudo sh oms-cfg.sh"
-    }
-  SETTINGS
-}
-
 ######################
 #generate cloudinit config using template
 ######################

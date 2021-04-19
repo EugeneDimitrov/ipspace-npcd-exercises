@@ -21,7 +21,7 @@ data "azurerm_resource_group" "tf_rg" {
 ######################
 
 module "network" {
-  source     = "./modules/network"
+  source = "./modules/network"
 
   rg_name  = data.azurerm_resource_group.tf_rg.name
   location = data.azurerm_resource_group.tf_rg.location
@@ -32,10 +32,10 @@ module "network" {
 ######################
 
 module "security" {
-  source     = "./modules/security"
+  source = "./modules/security"
 
-  rg_name  = data.azurerm_resource_group.tf_rg.name
-  location = data.azurerm_resource_group.tf_rg.location
+  rg_name    = data.azurerm_resource_group.tf_rg.name
+  location   = data.azurerm_resource_group.tf_rg.location
   web_sub_id = module.network.web_sub_id
   db_sub_id  = module.network.db_sub_id
   jh_sub_id  = module.network.jh_sub_id

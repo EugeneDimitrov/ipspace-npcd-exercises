@@ -40,6 +40,7 @@ module "loganalytic" {
   depends_on = [azurerm_resource_group.tf_rg]
   source     = "./modules/loganalytic"
 
-  rg_name  = var.rg_name
-  location = var.location
+  rg_name    = var.rg_name
+  location   = var.location
+  jh_vm_name = var.jh_vm_name
 }

@@ -23,8 +23,8 @@ data "azurerm_resource_group" "tf_rg" {
 }
 
 module "storage" {
-  source     = "./modules/storage"
+  source = "./modules/storage"
 
-  rg_name          = data.azurerm_resource_group.tf_rg.name
-  location         = data.azurerm_resource_group.tf_rg.location
+  rg_name  = data.azurerm_resource_group.tf_rg.name
+  location = data.azurerm_resource_group.tf_rg.location
 }
