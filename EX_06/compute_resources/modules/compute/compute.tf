@@ -103,30 +103,6 @@ resource "azurerm_linux_virtual_machine" "tf_jh_vm" {
   }
 }
 
-# add vm extension for log analytic
-
-resource "azurerm_virtual_machine_extension" "tf_jh_vm_mon" {
-  virtual_machine_id         = azurerm_linux_virtual_machine.tf_jh_vm.id
-  name                       = "OmsAgentForLinux"
-  publisher                  = "Microsoft.EnterpriseCloud.Monitoring"
-  type                       = "OmsAgentForLinux"
-  type_handler_version       = "1.7"
-  auto_upgrade_minor_version = true
-
-  settings = <<SETTINGS
-    {
-        "workspaceId": "${var.log_analytic_id}"
-    }
-  SETTINGS
-
-  protected_settings = <<PROTECTED_SETTINGS
-    {
-        "workspaceKey": "${var.log_analytic_key}"
-    }
-  PROTECTED_SETTINGS
-
-}
-
 ######################
 #generate cloudinit config using template
 ######################

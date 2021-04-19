@@ -12,5 +12,10 @@ variable "rg_name" {
 
 variable "log_analytic_name" {
   type    = string
-  default = "LogAnalytic"
+  default = "LogAnalyticWorkspace"
+}
+
+variable "jh_vm_name" {
+  type    = string
+  default = ""
 }

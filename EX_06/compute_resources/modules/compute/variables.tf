@@ -114,13 +114,3 @@ variable "image_version" {
   type    = string
   default = "latest"
 }
-
-variable "log_analytic_id" {
-  type    = string
-  default = ""
-}
-
-variable "log_analytic_key" {
-  type    = string
-  default = ""
-}

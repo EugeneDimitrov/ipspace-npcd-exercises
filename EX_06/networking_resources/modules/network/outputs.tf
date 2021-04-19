@@ -12,7 +12,7 @@ output "jh_sub_id" {
   value = azurerm_subnet.tf_jh_subnet.id
 }
 
-output "web_nic_id_lst" {
+/*output "web_nic_id_lst" {
   value = [azurerm_network_interface.tf_web_nic_1.id]
 }
 
@@ -34,4 +34,4 @@ output "db_private_ip" {
 
 output "jh_public_ip" {
   value = azurerm_public_ip.tf_pub_ip_2.ip_address
-}
+}*/
