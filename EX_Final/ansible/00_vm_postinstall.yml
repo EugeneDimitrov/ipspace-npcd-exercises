@@ -1,0 +1,31 @@
+#
+#
+# This playbook was created using Ansible 2.11.1
+---
+- name: Update packages on all VMs
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Update the OS
+    apt:
+      upgrade: yes
+      update_cache: yes
+
+  - name: Remove dependencies that are no longer required
+    apt:
+      autoremove: yes
+
+- name: Post install tasks on Jumphost VM
+  hosts: jh
+  connection: local
+
+  vars:
+  - ssh_keys_dir: ~/.ssh
+  - jumphost_dns_name: jmpmaas.germanywestcentral.cloudapp.azure.com
+  - username: azure
+
+  tasks:
+  - name: Copy ssh key from local machine to jumphost
+    command: "scp -oStrictHostKeyChecking=no {{ ssh_keys_dir }}/id_rsa {{ username }}@{{ jumphost_dns_name }}:.ssh/"
+    changed_when: no

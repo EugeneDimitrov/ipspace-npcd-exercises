@@ -1,0 +1,24 @@
+
+[jh]
+jumphost ansible_host=172.18.3.4
+
+[app]
+app-gwc ansible_host=172.18.1.4
+app-ne ansible_host=172.28.1.4
+
+[db_act]
+db-act ansible_host=172.18.2.4
+
+[db_stb]
+db-stb ansible_host=172.28.2.4
+
+[db:children]
+db_act
+db_stb
+
+[db:vars]
+ansible_ssh_pipelining=True
+
+[all:vars]
+ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q azure@jmpmaas.germanywestcentral.cloudapp.azure.com"'
+ansible_ssh_user=azure

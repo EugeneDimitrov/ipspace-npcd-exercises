@@ -1,0 +1,106 @@
+#
+#
+# This playbook was created using Ansible 2.11.1
+---
+- name: Install packages
+  hosts: db
+  become: yes
+  vars:
+    scripts_dir: /home/azure/scripts
+
+  tasks:
+  - name: Install a list of packages
+    apt:
+      pkg:
+      - postgresql-12
+      - python3-psycopg2
+
+- name: Configure active PostgreSQL server
+  hosts: db_act
+  become: yes
+
+  vars:
+    replication_user_name: repl_user
+    replication_user_pass: passwordsuper
+    database_subnet: 172.28.2.0/24
+
+  tasks:
+  - name: Update postgresql.conf file
+    lineinfile:
+      path: /etc/postgresql/12/main/postgresql.conf
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+    with_items:
+    - { regexp: "#listen_addresses = 'localhost'", line: "listen_addresses = '*'" }
+    - { regexp: "#wal_level = replica", line: "wal_level = replica" }
+    - { regexp: "#synchronous_commit = on", line: "synchronous_commit = on" }
+    - { regexp: "#max_wal_senders = 10", line: "max_wal_senders = 10" }
+    - { regexp: "#synchronous_standby_names = ''", line: "synchronous_standby_names = '*'" }
+
+  - name: Grant replication user access for database replication
+    community.postgresql.postgresql_pg_hba:
+      dest: /etc/postgresql/12/main/pg_hba.conf
+      contype: host
+      users: "{{ replication_user_name }}"
+      source: "{{ database_subnet }}"
+      databases: replication
+      
+  - name: Create PostgreSQL replication user
+    community.postgresql.postgresql_user: 
+      name: "{{ replication_user_name }}"
+      password: "{{ replication_user_pass }}"
+      role_attr_flags: REPLICATION
+
+    become: yes
+    become_user: postgres
+
+  - name: Restart PostgreSQL service
+    service:
+      name: postgresql
+      state: restarted
+    changed_when: no
+
+
+
+- name: Configure standby PostgreSQL server
+  hosts: db_stb
+  become: yes
+
+  vars:
+    replication_user_name: repl_user
+    replication_user_pass: passwordsuper
+
+  tasks:
+  - name: Stop PostgreSQL service
+    service:
+      name: postgresql
+      state: stopped
+    changed_when: no
+
+  - shell: rm -rf /var/lib/postgresql/12/main/*
+    changed_when: no
+  
+  - name: Check if folder is empty before proceeding
+    find:
+      paths: /var/lib/postgresql/12/main
+    register: filesFound
+
+  - name: Backup initial data from master
+    shell: su - postgres -c "PGPASSWORD={{ replication_user_pass }} pg_basebackup -R -h {{ hostvars['db-act']['ansible_host'] }} -U {{ replication_user_name }} -D /var/lib/postgresql/12/main -P"
+    when: filesFound.matched == 0
+    changed_when: no
+
+  - name: Update postgresql.conf file
+    lineinfile:
+      path: /etc/postgresql/12/main/postgresql.conf
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+    with_items:
+    - { regexp: "#listen_addresses = 'localhost'", line: "listen_addresses = '*'" }
+    - { regexp: "#hot_standby = on ", line: "hot_standby = on " }
+
+  - name: Start PostgreSQL service
+    service:
+      name: postgresql
+      state: started
+    changed_when: no
