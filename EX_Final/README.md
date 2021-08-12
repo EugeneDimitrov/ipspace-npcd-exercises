@@ -77,7 +77,7 @@ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 ```
 **Step 3**. Run terraform apply.
 
-### The Final Step
+### The Final Steps
 
 **Step 0 (optional)**. Activate ansible venv. For example:
 ```
