@@ -35,7 +35,7 @@ In this diagram:
 
 **Step 1**. Change several veriables:
 
-* in .variables.ft
+* in .variables.tf
 
 ```
 #Change this to allow connection to jumphost from your PC. Example: default = ["234.11.234.88"]
