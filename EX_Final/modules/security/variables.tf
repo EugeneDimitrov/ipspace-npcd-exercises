@@ -58,12 +58,42 @@ variable "user_pub_ip" {
   default = null
 }
 
+variable "dc_lan_sub" {
+  type    = list(any)
+  default = null
+}
+
 variable "subnet_jh_name_gwc" {
   type    = string
   default = null
 }
 
+variable "subnet_app_name_gwc" {
+  type    = string
+  default = null
+}
+
+variable "subnet_app_name_ne" {
+  type    = string
+  default = null
+}
+
+variable "subnet_db_name_gwc" {
+  type    = string
+  default = null
+}
+
+variable "subnet_db_name_ne" {
+  type    = string
+  default = null
+}
+
 variable "vnet_maas_name_gwc" {
+  type    = string
+  default = null
+}
+
+variable "vnet_maas_name_ne" {
   type    = string
   default = null
 }

@@ -2,3 +2,5 @@
 *.tfstate*
 venv
 .vscode
+*.key
+*.crt

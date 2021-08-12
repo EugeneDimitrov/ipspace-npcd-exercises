@@ -3,14 +3,14 @@
 jumphost ansible_host=${jh_ip_gwc}
 
 [app]
-app-gwc ansible_host=${app_ip_gwc}
-app-ne ansible_host=${app_ip_ne}
+netbox-gwc ansible_host=${app_ip_gwc}
+netbox-ne ansible_host=${app_ip_ne}
 
 [db_act]
-db-act ansible_host=${db_ip_gwc}
+psql-act ansible_host=${db_ip_gwc}
 
 [db_stb]
-db-stb ansible_host=${db_ip_ne}
+psql-stb ansible_host=${db_ip_ne}
 
 [db:children]
 db_act

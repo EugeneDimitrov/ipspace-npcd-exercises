@@ -1,8 +1,8 @@
 # computation part of Azure infrastructure
 
-######################
+############################################################
 #create jumphost VM
-######################
+############################################################
 
 resource "azurerm_linux_virtual_machine" "vm_jh_gwc" {
   name                  = "VM_JH_${var.name_prefix_gwc}"
@@ -11,7 +11,7 @@ resource "azurerm_linux_virtual_machine" "vm_jh_gwc" {
   network_interface_ids = ["${var.jh_nic_id_gwc}"]
   size                  = "Standard_B1s"
 
-  computer_name                   = "jh-${var.name_prefix_gwc}"
+  computer_name                   = "jh-${lower(var.name_prefix_gwc)}"
   admin_username                  = var.admin_user
   disable_password_authentication = true
 
@@ -34,9 +34,9 @@ resource "azurerm_linux_virtual_machine" "vm_jh_gwc" {
   }
 }
 
-######################
+############################################################
 #create Application VMs
-######################
+############################################################
 
 resource "azurerm_linux_virtual_machine" "vm_app_gwc" {
   name                  = "VM_App_${var.name_prefix_gwc}"
@@ -45,7 +45,7 @@ resource "azurerm_linux_virtual_machine" "vm_app_gwc" {
   network_interface_ids = ["${var.app_nic_id_gwc}"]
   size                  = "Standard_B2s"
 
-  computer_name                   = "app-${var.name_prefix_gwc}"
+  computer_name                   = "netbox-${lower(var.name_prefix_gwc)}"
   admin_username                  = var.admin_user
   disable_password_authentication = true
 
@@ -75,7 +75,7 @@ resource "azurerm_linux_virtual_machine" "vm_app_ne" {
   network_interface_ids = ["${var.app_nic_id_ne}"]
   size                  = "Standard_B2s"
 
-  computer_name                   = "app-${var.name_prefix_ne}"
+  computer_name                   = "netbox-${lower(var.name_prefix_ne)}"
   admin_username                  = var.admin_user
   disable_password_authentication = true
 
@@ -98,9 +98,9 @@ resource "azurerm_linux_virtual_machine" "vm_app_ne" {
   }
 }
 
-######################
+############################################################
 #create Database VMs
-######################
+############################################################
 
 
 resource "azurerm_linux_virtual_machine" "vm_db_gwc" {
@@ -110,7 +110,7 @@ resource "azurerm_linux_virtual_machine" "vm_db_gwc" {
   network_interface_ids = ["${var.db_nic_id_gwc}"]
   size                  = "Standard_D2s_v3"
 
-  computer_name                   = "db-act"
+  computer_name                   = "psql-act"
   admin_username                  = var.admin_user
   disable_password_authentication = true
 
@@ -140,7 +140,7 @@ resource "azurerm_linux_virtual_machine" "vm_db_ne" {
   network_interface_ids = ["${var.db_nic_id_ne}"]
   size                  = "Standard_D2s_v3"
 
-  computer_name                   = "db-stb"
+  computer_name                   = "psql-stb"
   admin_username                  = var.admin_user
   disable_password_authentication = true
 
@@ -163,9 +163,9 @@ resource "azurerm_linux_virtual_machine" "vm_db_ne" {
   }
 }
 
-######################
+############################################################
 #generate inventory file for ansible using template
-######################
+############################################################
 
 data "azurerm_public_ip" "pub_ip_jh_gwc" {
   name                = "JH_Pub_IP_${var.name_prefix_gwc}"
@@ -200,14 +200,14 @@ data "azurerm_network_interface" "db_nic_ne" {
 resource "local_file" "ansible_hosts" {
   content = templatefile("${path.module}/templates/ansible_hosts.tpl",
     {
-     app_ip_gwc  = data.azurerm_network_interface.app_nic_gwc.ip_configuration[0].private_ip_address
-     app_ip_ne   = data.azurerm_network_interface.app_nic_ne.ip_configuration[0].private_ip_address
-     db_ip_gwc   = data.azurerm_network_interface.db_nic_gwc.ip_configuration[0].private_ip_address
-     db_ip_ne    = data.azurerm_network_interface.db_nic_ne.ip_configuration[0].private_ip_address
-     jh_ip_gwc    = data.azurerm_network_interface.jh_nic_gwc.ip_configuration[0].private_ip_address
+      app_ip_gwc = data.azurerm_network_interface.app_nic_gwc.ip_configuration[0].private_ip_address
+      app_ip_ne  = data.azurerm_network_interface.app_nic_ne.ip_configuration[0].private_ip_address
+      db_ip_gwc  = data.azurerm_network_interface.db_nic_gwc.ip_configuration[0].private_ip_address
+      db_ip_ne   = data.azurerm_network_interface.db_nic_ne.ip_configuration[0].private_ip_address
+      jh_ip_gwc  = data.azurerm_network_interface.jh_nic_gwc.ip_configuration[0].private_ip_address
 
-     admin_user  = var.admin_user
-     jh_dns_name = data.azurerm_public_ip.pub_ip_jh_gwc.fqdn
+      admin_user  = var.admin_user
+      jh_dns_name = data.azurerm_public_ip.pub_ip_jh_gwc.fqdn
     }
   )
   filename = "ansible/hosts"

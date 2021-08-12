@@ -1,5 +1,4 @@
-#
-#
+# Update and prepare all VMs for application install
 # This playbook was created using Ansible 2.11.1
 ---
 - name: Update packages on all VMs

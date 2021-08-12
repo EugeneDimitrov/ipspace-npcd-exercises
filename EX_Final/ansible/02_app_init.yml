@@ -1,0 +1,152 @@
+# Install and configure Netbox application VMs.
+# This playbook was created using Ansible 2.11.1
+---
+- name: Install packages
+  hosts: app
+  become: yes
+  vars:
+    home_dir: /home/azure
+    netbox_release: 2.11.10
+    netbox_app_dir: /opt/netbox
+
+  tasks:
+  - name: Install a list of packages
+    apt:
+      pkg:
+      - redis-server
+      - python3 
+      - python3-pip 
+      - python3-venv 
+      - python3-dev 
+      - build-essential 
+      - libxml2-dev 
+      - libxslt1-dev 
+      - libffi-dev 
+      - libpq-dev 
+      - libssl-dev 
+      - zlib1g-dev
+      - unzip
+      - nginx
+
+  - name: pip self-update
+    pip:
+      name: pip
+      state: latest
+
+  - name: Download latest netbox release
+    get_url: url=https://github.com/netbox-community/netbox/archive/refs/tags/v{{ netbox_release }}.zip dest={{ home_dir }}
+
+  - name: Extract netbox archive into azure home dir
+    ansible.builtin.unarchive:
+      src: "{{ home_dir }}/netbox-{{ netbox_release }}.zip"
+      dest: "{{ home_dir }}"
+      remote_src: yes
+
+  - name: Create symbolic link 
+    file:
+      src: "{{ home_dir }}/netbox-{{ netbox_release }}"
+      dest: "{{ netbox_app_dir }}"
+      state: link
+
+  - name: Create system group 'netbox'
+    ansible.builtin.group:
+      name: netbox
+      system: yes
+
+  - name: Create user netbox and add it to group 'netbox'
+    ansible.builtin.user:
+      name: netbox
+      group: netbox
+      home: /home/netbox
+      system: yes
+
+  - name: Set permissions
+    ansible.builtin.file:
+      dest: "{{ netbox_app_dir }}/netbox/media/"
+      owner: netbox
+      recurse: yes
+
+  - name: Copy default netbox config
+    ansible.builtin.copy:
+      src: "{{ netbox_app_dir }}/netbox/netbox/configuration.example.py"
+      dest: "{{ netbox_app_dir }}/netbox/netbox/configuration.py"
+      remote_src: yes
+    changed_when: no
+
+  - name: Update netbox config file
+    lineinfile:
+      path: "{{ netbox_app_dir }}/netbox/netbox/configuration.py"
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+    with_items:
+    - { regexp: "ALLOWED_HOSTS = \\[\\]", line: "ALLOWED_HOSTS = ['*']" }
+    - { regexp: "'USER': '',               # PostgreSQL username", line: "    'USER': 'netbox'," }
+    - { regexp: "'PASSWORD': '',           # PostgreSQL password", line: "    'PASSWORD': '{{ netbox_user_pass }}'," }
+    - { regexp: "'HOST': 'localhost',      # Database server", line: "    'HOST': '{{ hostvars['psql-act'].ansible_host }}'," }
+    - { regexp: "SECRET_KEY = ''", line: "SECRET_KEY = '{{ netbox_secret_key }}'" }
+
+  - name: Run the Upgrade Script
+    shell: sudo /opt/netbox/upgrade.sh
+    changed_when: no 
+    become: yes
+    become_user: azure
+
+  - name: Copy default gunicorn config
+    ansible.builtin.copy:
+      src: "{{ netbox_app_dir }}/contrib/gunicorn.py"
+      dest: "{{ netbox_app_dir }}/gunicorn.py"
+      remote_src: yes
+
+  - name: systemd Setup
+    shell: cp -v {{ netbox_app_dir }}/contrib/*.service /etc/systemd/system/
+    changed_when: no
+
+  - name: Restart daemon service
+    shell: systemctl daemon-reload
+    changed_when: no
+
+  - name: Start netbox service
+    service:
+      name: "{{ item }}"
+      state: started
+      enabled: yes
+
+    with_items:
+    - netbox
+    - netbox-rq
+
+  - name: Copy nginx certs
+    ansible.builtin.copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+
+    with_items:
+    - { src: "netbox.crt", dest: "/etc/ssl/certs" }
+    - { src: "netbox.key", dest: "/etc/ssl/private" }
+
+  - name: Copy default nginx config
+    ansible.builtin.copy:
+      src: "{{ netbox_app_dir }}/contrib/nginx.conf"
+      dest: "/etc/nginx/sites-available/netbox"
+      remote_src: yes
+
+  - name: Check if default site file exists
+    stat:
+      path: /etc/nginx/sites-enabled/default
+    register: site_check
+  
+  - shell: rm /etc/nginx/sites-enabled/default
+    changed_when: no
+    when: site_check.stat.exists
+
+  - name: Create symbolic link 
+    file:
+      src: /etc/nginx/sites-available/netbox
+      dest: /etc/nginx/sites-enabled/netbox
+      state: link
+
+  - name: Restart Nginx service
+    service:
+      name: nginx
+      state: reloaded
+    changed_when: no

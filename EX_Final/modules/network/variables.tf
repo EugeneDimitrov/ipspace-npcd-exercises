@@ -84,3 +84,23 @@ variable "name_prefix_ne" {
   type    = string
   default = "NE"
 }
+
+variable "dc_lan_sub" {
+  type    = list(any)
+  default = null
+}
+
+variable "bgp_dc1_r1" {
+  type    = string
+  default = null
+}
+
+variable "bgp_dc1_r2" {
+  type    = string
+  default = null
+}
+
+variable "ipsec_sec_key" {
+  type    = string
+  default = null
+}

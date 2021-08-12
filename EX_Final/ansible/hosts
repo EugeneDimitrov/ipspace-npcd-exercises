@@ -3,14 +3,14 @@
 jumphost ansible_host=172.18.3.4
 
 [app]
-app-gwc ansible_host=172.18.1.4
-app-ne ansible_host=172.28.1.4
+netbox-gwc ansible_host=172.18.1.4
+netbox-ne ansible_host=172.28.1.4
 
 [db_act]
-db-act ansible_host=172.18.2.4
+psql-act ansible_host=172.18.2.4
 
 [db_stb]
-db-stb ansible_host=172.28.2.4
+psql-stb ansible_host=172.28.2.4
 
 [db:children]
 db_act
