@@ -10,7 +10,7 @@ In this exercise I deploy [Netbox](https://netbox.readthedocs.io/en/stable/) app
   * The application should be distributed over two Azure regions and support DNS based load sharing.
 
 ## The Architecture
-To meet high availability requirements I decided to use "swimlanes" approach, so the architecture looks as follows:
+To meet high availability requirements I decided to use the architecture that looks as follows:
 <img src="img/app_arch.png">
 
 In this image:
